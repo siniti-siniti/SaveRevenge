@@ -186,6 +186,16 @@ window.onload = () => {
     }
 
     function startRevenge(who) {
+        // 石の数を数える
+        let b = board.flat().filter(c => c === 'B').length;
+        let w = board.flat().filter(c => c === 'W').length;
+    
+        // 相手より少ないときだけリベンジ
+        if ((who === 'B' && b >= w) || (who === 'W' && w >= b)) {
+            endRevenge();
+            return;
+        }
+    
         seRevenge.play();
         specialMode = true;
         specialPlayer = who;
@@ -195,17 +205,16 @@ window.onload = () => {
         messageDiv.innerText = who==='B' ? "REVENGE! Click to flip or QUIT." : "REVENGE! White is thinking...";
         updateSpecialCount();
         updateDisplay();
-
+    
         if (who === 'W') {
             setTimeout(() => {
                 let totalCells = size * size;
                 let wCount = board.flat().filter(c => c === 'W').length;
                 let wRatio = wCount / totalCells;
-
-                // AI石が少ないほどリベンジ率UP
+    
                 let probability = 1.0 - wRatio;
                 probability = Math.min(1, Math.max(0.2, probability)); // 最小20%、最大100%
-
+    
                 if (Math.random() < probability) {
                     aiRevenge();
                 } else {
@@ -216,6 +225,7 @@ window.onload = () => {
             revengeBtn.style.display = 'inline';
         }
     }
+
 
     function triggerRevenge(x, y, color) {
         seRevengeFlip.play();
